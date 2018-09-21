@@ -6,10 +6,8 @@ ENV LC_ALL en_US.UTF-8
 ARG DOCKER_TAG
 ENV DOCKER_TAG ${DOCKER_TAG}
 
-ENV APP_ROOT /
-
-
-ENV ENVIRONMENT DEV
+ENV APP_ROOT /app
+WORKDIR /app
 
 # Dependencies
 RUN \
@@ -30,9 +28,13 @@ RUN \
         libxml2-dev \
         libxslt-dev \
         runit \
-        nginx \
         wget \
         pandoc
+
+# copy in everything from repo
+COPY . .
+
+RUN chmod +x /app/snapshotgen.sh
 
 # Python 3.6
 RUN \
@@ -41,4 +43,6 @@ RUN \
     cd Python-3.7.0/ && \
     ./configure && \
     make altinstall
-    sh ./snapshotgen.sh
+
+# entrypoint
+CMD /app/snapshotgen.sh
