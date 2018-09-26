@@ -6,28 +6,28 @@ cd $HOME
 rm -rf snapshot.json
 rm -rf txgen-latest.list
 
-echo snapshot-generator: installing tinman
+echo snapshot-generator: installing dpaybot
 
-git clone https://github.com/steemit/tinman
-virtualenv -p $(which python3) ~/ve/tinman
-source ~/ve/tinman/bin/activate
-cd tinman
+git clone https://github.com/dpays/dpaybot
+virtualenv -p $(which python3) ~/ve/dpaybot
+source ~/ve/dpaybot/bin/activate
+cd dpaybot
 pip install pipenv && pipenv install
 pip install .
 
 cd $HOME
 
-cp $HOME/tinman/txgen.conf.example $HOME/txgen.conf
+cp $HOME/dpaybot/txgen.conf.example $HOME/txgen.conf
 
 timestamp=$(date +%s)
 
 echo snapshot-generator: generating a new snapshot.json file
 
-tinman snapshot -s https://api.steemit.com -o snapshot.json
+dpaybot snapshot -s https://api.dpays.io -o snapshot.json
 
 echo snapshot-generator: generating a new txgen-latest.list
 
-tinman txgen -c txgen.conf -o txgen-latest.list
+dpaybot txgen -c txgen.conf -o txgen-latest.list
 
 echo snapshot-generator: copying txgen-$timestamp.json to s3://$S3_BUCKET
 aws s3 cp txgen-latest.list s3://$S3_BUCKET/txgen-$timestamp.list
